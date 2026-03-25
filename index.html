@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,19 +9,51 @@
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
+    /* ---- THEME VARIABLES ---- */
     :root {
-      --bg-primary: #0b1120;
-      --bg-card: #111827;
-      --bg-card-hover: #1a2335;
       --teal: #06d6a0;
       --teal-dim: rgba(6, 214, 160, 0.15);
       --teal-glow: rgba(6, 214, 160, 0.25);
+      --font-body: 'Outfit', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #0b1120;
+      --bg-card: #111827;
+      --bg-card-hover: #1a2335;
       --text-primary: #e2e8f0;
       --text-secondary: #94a3b8;
       --text-muted: #64748b;
+      --text-heading: #fff;
       --border: rgba(148, 163, 184, 0.08);
-      --font-body: 'Outfit', sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
+      --about-tag-border: rgba(226, 232, 240, 0.1);
+      --about-tag-bg: rgba(226, 232, 240, 0.05);
+      --about-tag-bg-hover: rgba(226, 232, 240, 0.1);
+      --glow-1: rgba(6, 214, 160, 0.06);
+      --glow-2: rgba(6, 214, 160, 0.03);
+      --toggle-bg: rgba(148, 163, 184, 0.1);
+      --toggle-bg-hover: rgba(148, 163, 184, 0.18);
+      --chevron-color: #64748b;
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f1f5f9;
+      --text-primary: #1e293b;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --text-heading: #0f172a;
+      --border: rgba(15, 23, 42, 0.08);
+      --about-tag-border: rgba(15, 23, 42, 0.1);
+      --about-tag-bg: rgba(15, 23, 42, 0.04);
+      --about-tag-bg-hover: rgba(15, 23, 42, 0.08);
+      --glow-1: rgba(6, 214, 160, 0.08);
+      --glow-2: rgba(6, 214, 160, 0.04);
+      --toggle-bg: rgba(15, 23, 42, 0.06);
+      --toggle-bg-hover: rgba(15, 23, 42, 0.12);
+      --chevron-color: #94a3b8;
     }
 
     html { scroll-behavior: smooth; }
@@ -35,6 +67,7 @@
       overflow-x: hidden;
       -webkit-tap-highlight-color: transparent;
       -webkit-text-size-adjust: 100%;
+      transition: background 0.35s, color 0.35s;
     }
 
     body::before {
@@ -42,10 +75,59 @@
       position: fixed;
       inset: 0;
       background:
-        radial-gradient(ellipse 80% 60% at 50% -20%, rgba(6, 214, 160, 0.06), transparent),
-        radial-gradient(ellipse 60% 50% at 80% 100%, rgba(6, 214, 160, 0.03), transparent);
+        radial-gradient(ellipse 80% 60% at 50% -20%, var(--glow-1), transparent),
+        radial-gradient(ellipse 60% 50% at 80% 100%, var(--glow-2), transparent);
       pointer-events: none;
       z-index: 0;
+      transition: background 0.35s;
+    }
+
+    /* ---- TOP BAR ---- */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      right: 0;
+      left: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      background: transparent;
+    }
+
+    .toggle-btn {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      padding: 0.4rem 0.85rem;
+      border-radius: 999px;
+      border: none;
+      background: var(--toggle-bg);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: background 0.25s, color 0.25s;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      touch-action: manipulation;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    .toggle-btn:hover {
+      background: var(--toggle-bg-hover);
+      color: var(--text-primary);
+    }
+
+    .toggle-btn .icon {
+      font-size: 0.95rem;
+      line-height: 1;
+    }
+
+    .lang-btn-active {
+      background: var(--teal-dim);
+      color: var(--teal);
     }
 
     .container {
@@ -53,7 +135,7 @@
       z-index: 1;
       max-width: 820px;
       margin: 0 auto;
-      padding: 3rem 1.5rem 6rem;
+      padding: 4rem 1.5rem 6rem;
     }
 
     /* ---- HEADER ---- */
@@ -68,7 +150,8 @@
       font-weight: 700;
       letter-spacing: -0.03em;
       line-height: 1.15;
-      color: #fff;
+      color: var(--text-heading);
+      transition: color 0.35s;
     }
 
     header h1 span { color: var(--teal); }
@@ -78,36 +161,7 @@
       font-weight: 400;
       color: var(--text-secondary);
       margin-top: 0.5rem;
-    }
-
-    .contact-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem 1.8rem;
-      margin-top: 1.4rem;
-    }
-
-    .contact-row a,
-    .contact-row span {
-      font-size: 0.82rem;
-      font-family: var(--font-mono);
-      color: var(--text-muted);
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-      transition: color 0.25s;
-    }
-
-    .contact-row a:hover { color: var(--teal); }
-    .contact-row a { touch-action: manipulation; }
-
-    .contact-row svg {
-      width: 15px;
-      height: 15px;
-      stroke: var(--teal);
-      stroke-width: 2;
-      fill: none;
+      transition: color 0.35s;
     }
 
     /* ---- SECTIONS ---- */
@@ -156,14 +210,14 @@
       font-weight: 500;
       padding: 0.45rem 1rem;
       border-radius: 999px;
-      border: 1px solid rgba(226, 232, 240, 0.1);
-      background: rgba(226, 232, 240, 0.05);
+      border: 1px solid var(--about-tag-border);
+      background: var(--about-tag-bg);
       color: var(--text-primary);
-      transition: background 0.25s, transform 0.2s;
+      transition: background 0.25s, transform 0.2s, color 0.35s, border-color 0.35s;
     }
 
     .about-tag:hover {
-      background: rgba(226, 232, 240, 0.1);
+      background: var(--about-tag-bg-hover);
       transform: translateY(-1px);
     }
 
@@ -182,6 +236,11 @@
       border-color: rgba(6, 214, 160, 0.12);
     }
 
+    /* Collapsible entries */
+    .entry.collapsible {
+      cursor: pointer;
+    }
+
     .entry-header {
       display: flex;
       justify-content: space-between;
@@ -190,10 +249,23 @@
       flex-wrap: wrap;
     }
 
+    .entry-header-left {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .entry-header-right {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      flex-shrink: 0;
+    }
+
     .entry-role {
       font-size: 1.05rem;
       font-weight: 600;
-      color: #fff;
+      color: var(--text-heading);
+      transition: color 0.35s;
     }
 
     .entry-company {
@@ -208,6 +280,33 @@
       color: var(--text-muted);
       white-space: nowrap;
       padding-top: 0.15rem;
+      transition: color 0.35s;
+    }
+
+    .chevron {
+      width: 18px;
+      height: 18px;
+      stroke: var(--chevron-color);
+      stroke-width: 2.5;
+      fill: none;
+      transition: transform 0.3s ease, stroke 0.35s;
+      flex-shrink: 0;
+      margin-top: 0.25rem;
+    }
+
+    .entry.open .chevron {
+      transform: rotate(180deg);
+      stroke: var(--teal);
+    }
+
+    .entry-collapsible {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+    }
+
+    .entry.open .entry-collapsible {
+      max-height: 500px;
     }
 
     .entry-desc {
@@ -215,6 +314,7 @@
       font-size: 0.88rem;
       color: var(--text-secondary);
       line-height: 1.7;
+      transition: color 0.35s;
     }
 
     .entry-desc ul {
@@ -254,9 +354,7 @@
     }
 
     /* ---- SKILLS ---- */
-    .skills-category {
-      margin-bottom: 1rem;
-    }
+    .skills-category { margin-bottom: 1rem; }
 
     .skills-category-title {
       font-size: 0.78rem;
@@ -265,6 +363,7 @@
       text-transform: uppercase;
       letter-spacing: 0.1em;
       margin-bottom: 0.45rem;
+      transition: color 0.35s;
     }
 
     .skills-grid {
@@ -304,10 +403,11 @@
       border-radius: 10px;
       border: 1px solid var(--border);
       background: var(--bg-card);
+      transition: background 0.35s, border-color 0.35s;
     }
 
     .lang-name { font-weight: 500; font-size: 0.95rem; }
-    .lang-level { font-size: 0.78rem; font-family: var(--font-mono); color: var(--text-muted); }
+    .lang-level { font-size: 0.78rem; font-family: var(--font-mono); color: var(--text-muted); transition: color 0.35s; }
 
     /* ---- ANIMATIONS ---- */
     @keyframes fadeUp {
@@ -317,68 +417,39 @@
 
     /* ---- RESPONSIVE ---- */
     @media (max-width: 600px) {
-      .container { padding: 2rem 1rem 4rem; }
+      .container { padding: 3.5rem 1rem 4rem; }
+      .top-bar { padding: 0.6rem 1rem; }
 
       header h1 { font-size: 2rem; }
       .tagline { font-size: 0.92rem; }
-
-      .contact-row {
-        flex-direction: column;
-        gap: 0.75rem;
-      }
-
-      .contact-row a,
-      .contact-row span {
-        font-size: 0.82rem;
-        padding: 0.5rem 0;
-      }
 
       section { margin-top: 2.2rem; }
       .section-title { margin-bottom: 1rem; }
 
       .about-tags { gap: 0.4rem; }
-      .about-tag {
-        font-size: 0.8rem;
-        padding: 0.38rem 0.85rem;
-      }
+      .about-tag { font-size: 0.8rem; padding: 0.38rem 0.85rem; }
 
-      .entry {
-        padding: 1.1rem 1.2rem;
-        margin-bottom: 0.7rem;
-      }
-
+      .entry { padding: 1.1rem 1.2rem; margin-bottom: 0.7rem; }
       .entry-header { flex-direction: column; gap: 0.2rem; }
-
+      .entry-header-right { justify-content: space-between; width: 100%; }
       .entry-role { font-size: 0.98rem; }
       .entry-company { font-size: 0.85rem; }
-      .entry-date {
-        font-size: 0.75rem;
-        margin-top: 0.15rem;
-      }
-
+      .entry-date { font-size: 0.75rem; margin-top: 0.15rem; }
       .entry-desc { font-size: 0.85rem; }
       .entry-desc li { margin-bottom: 0.3rem; }
-
       .entry-tags { gap: 0.3rem; }
-      .entry-tag {
-        font-size: 0.68rem;
-        padding: 0.22rem 0.55rem;
-      }
+      .entry-tag { font-size: 0.68rem; padding: 0.22rem 0.55rem; }
 
       .skills-category-title { font-size: 0.72rem; }
-      .skill-tag {
-        font-size: 0.75rem;
-        padding: 0.35rem 0.75rem;
-      }
+      .skill-tag { font-size: 0.75rem; padding: 0.35rem 0.75rem; }
 
       .lang-grid { grid-template-columns: 1fr; }
       .lang-item { padding: 0.75rem 1rem; }
       .lang-name { font-size: 0.9rem; }
     }
 
-    /* Extra small phones */
     @media (max-width: 380px) {
-      .container { padding: 1.5rem 0.75rem 3rem; }
+      .container { padding: 3.2rem 0.75rem 3rem; }
       header h1 { font-size: 1.75rem; }
       .about-tag { font-size: 0.75rem; padding: 0.32rem 0.7rem; }
       .entry { padding: 1rem; }
@@ -387,48 +458,63 @@
   </style>
 </head>
 <body>
+
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <button class="toggle-btn" id="themeToggle" aria-label="Toggle theme">
+      <span class="icon" id="themeIcon">&#9790;</span>
+    </button>
+    <button class="toggle-btn lang-btn-active" id="langEN">EN</button>
+    <button class="toggle-btn" id="langDE">DE</button>
+  </div>
+
   <div class="container">
 
     <!-- HEADER -->
     <header>
       <h1>Cosimo <span>Meini</span></h1>
-      <p class="tagline">Finance Transformation &middot; Business &amp; IT Integration &middot; Strategy &amp; Digital Innovation</p>
-
+      <p class="tagline" data-en="Finance Transformation &middot; Business &amp; IT Integration &middot; Strategy &amp; Digital Innovation" data-de="Finance-Transformation &middot; Business &amp; IT-Integration &middot; Strategie &amp; Digitale Innovation"></p>
     </header>
 
-    <!-- ABOUT ME — TAGS -->
+    <!-- ABOUT ME -->
     <section>
-      <h2 class="section-title">About Me</h2>
+      <h2 class="section-title" data-en="About Me" data-de="&Uuml;ber mich"></h2>
       <div class="about-tags">
-        <span class="about-tag">9+ Years Finance Transformation</span>
-        <span class="about-tag">Business &#8596; IT Bridge</span>
-        <span class="about-tag">CEO &amp; CFO Advisory</span>
-        <span class="about-tag">Target Operating Model Design</span>
-        <span class="about-tag">Cross-Functional Leadership</span>
-        <span class="about-tag">C-Suite Stakeholder Management</span>
-        <span class="about-tag">AI-Powered Tooling</span>
-        <span class="about-tag">End-to-End Delivery</span>
+        <span class="about-tag" data-en="9+ Years Finance Transformation" data-de="9+ Jahre Finance-Transformation"></span>
+        <span class="about-tag" data-en="Business &#8596; IT Bridge" data-de="Business &#8596; IT-Br&uuml;cke"></span>
+        <span class="about-tag" data-en="CEO &amp; CFO Advisory" data-de="CEO- &amp; CFO-Beratung"></span>
+        <span class="about-tag" data-en="Target Operating Model Design" data-de="Target Operating Model Design"></span>
+        <span class="about-tag" data-en="Cross-Functional Leadership" data-de="Cross-funktionale F&uuml;hrung"></span>
+        <span class="about-tag" data-en="C-Suite Stakeholder Management" data-de="C-Suite Stakeholder-Management"></span>
+        <span class="about-tag" data-en="AI-Powered Tooling" data-de="KI-gest&uuml;tzte Tools"></span>
+        <span class="about-tag" data-en="End-to-End Delivery" data-de="End-to-End-Umsetzung"></span>
       </div>
     </section>
 
     <!-- EXPERIENCE -->
     <section>
-      <h2 class="section-title">Experience</h2>
+      <h2 class="section-title" data-en="Experience" data-de="Berufserfahrung"></h2>
 
-      <div class="entry">
+      <!-- SunExpress -->
+      <div class="entry collapsible" onclick="this.classList.toggle('open')">
         <div class="entry-header">
-          <div>
-            <div class="entry-role">Senior Lead Corporate Office (Assistant to the CEO)</div>
+          <div class="entry-header-left">
+            <div class="entry-role" data-en="Senior Lead Corporate Office (Assistant to the CEO)" data-de="Senior Lead Corporate Office (Assistent des CEO)"></div>
             <div class="entry-company">SunExpress (Lufthansa &amp; Turkish Airlines JV) &middot; Frankfurt</div>
           </div>
-          <div class="entry-date">Mar 2025 &mdash; Present</div>
+          <div class="entry-header-right">
+            <div class="entry-date" data-en="Mar 2025 &mdash; Present" data-de="M&auml;r 2025 &mdash; Heute"></div>
+            <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
         </div>
-        <div class="entry-desc">
-          <ul>
-            <li>CEO advisory on strategy, risk framing, and Board-level communications</li>
-            <li>Reporting infrastructure overhaul: static PDFs &#8594; automated QlikSense dashboards</li>
-            <li>AI briefing agent design &mdash; architecture complete, in testing</li>
-          </ul>
+        <div class="entry-collapsible">
+          <div class="entry-desc">
+            <ul>
+              <li data-en="CEO advisory on strategy, risk framing, and Board-level communications" data-de="CEO-Beratung zu Strategie, Risikoeinsch&auml;tzung und Vorstandskommunikation"></li>
+              <li data-en="Reporting infrastructure overhaul: static PDFs &#8594; automated QlikSense dashboards" data-de="Umbau der Reporting-Infrastruktur: statische PDFs &#8594; automatisierte QlikSense-Dashboards"></li>
+              <li data-en="AI briefing agent design &mdash; architecture complete, in testing" data-de="Design eines KI-Briefing-Agenten &mdash; Architektur abgeschlossen, in der Testphase"></li>
+            </ul>
+          </div>
         </div>
         <div class="entry-tags">
           <span class="entry-tag">CEO Advisory</span>
@@ -438,20 +524,26 @@
         </div>
       </div>
 
-      <div class="entry">
+      <!-- Zalando -->
+      <div class="entry collapsible" onclick="this.classList.toggle('open')">
         <div class="entry-header">
-          <div>
-            <div class="entry-role">Senior Transformation Manager FP&amp;A</div>
+          <div class="entry-header-left">
+            <div class="entry-role" data-en="Senior Transformation Manager FP&amp;A" data-de="Senior Transformation Manager FP&amp;A"></div>
             <div class="entry-company">Zalando SE &middot; Berlin</div>
           </div>
-          <div class="entry-date">May 2021 &mdash; Feb 2025</div>
+          <div class="entry-header-right">
+            <div class="entry-date" data-en="May 2021 &mdash; Feb 2025" data-de="Mai 2021 &mdash; Feb 2025"></div>
+            <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
         </div>
-        <div class="entry-desc">
-          <ul>
-            <li>Full financial data migration (P&amp;L, BS, CF, tax) to SAP Analytics Cloud + group-wide reporting redesign</li>
-            <li>2-year Transformation: TOM design, E2E budgeting, KPI framework &mdash; 50+ person team</li>
-            <li>Hyper care rollout for 150+ stakeholders incl. AI chatbot for go-live support</li>
-          </ul>
+        <div class="entry-collapsible">
+          <div class="entry-desc">
+            <ul>
+              <li data-en="Full financial data migration (P&amp;L, BS, CF, tax) to SAP Analytics Cloud + group-wide reporting redesign" data-de="Vollst&auml;ndige Finanzdatenmigration (GuV, Bilanz, CF, Steuern) zu SAP Analytics Cloud + konzernweites Reporting-Redesign"></li>
+              <li data-en="2-year Transformation: TOM design, E2E budgeting, KPI framework &mdash; 50+ person team" data-de="2-Jahres-Transformation: TOM-Design, E2E-Budgetierung, KPI-Framework &mdash; 50+ Personen Team"></li>
+              <li data-en="Hyper care rollout for 150+ stakeholders incl. AI chatbot for go-live support" data-de="Hyper-Care-Rollout f&uuml;r 150+ Stakeholder inkl. KI-Chatbot f&uuml;r Go-Live-Support"></li>
+            </ul>
+          </div>
         </div>
         <div class="entry-tags">
           <span class="entry-tag">SAP Analytics Cloud</span>
@@ -462,19 +554,25 @@
         </div>
       </div>
 
-      <div class="entry">
+      <!-- Generali -->
+      <div class="entry collapsible" onclick="this.classList.toggle('open')">
         <div class="entry-header">
-          <div>
-            <div class="entry-role">Financial Controlling &amp; Transformation Manager</div>
+          <div class="entry-header-left">
+            <div class="entry-role" data-en="Financial Controlling &amp; Transformation Manager" data-de="Financial Controlling &amp; Transformation Manager"></div>
             <div class="entry-company">Generali &middot; Milan</div>
           </div>
-          <div class="entry-date">Apr 2020 &mdash; Apr 2021</div>
+          <div class="entry-header-right">
+            <div class="entry-date" data-en="Apr 2020 &mdash; Apr 2021" data-de="Apr 2020 &mdash; Apr 2021"></div>
+            <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
         </div>
-        <div class="entry-desc">
-          <ul>
-            <li>FP&amp;A cloud migration to AWS + automated Power BI dashboards for C-suite</li>
-            <li>Planning workflow redesign enabling strategic CFO analysis</li>
-          </ul>
+        <div class="entry-collapsible">
+          <div class="entry-desc">
+            <ul>
+              <li data-en="FP&amp;A cloud migration to AWS + automated Power BI dashboards for C-suite" data-de="FP&amp;A-Cloud-Migration zu AWS + automatisierte Power BI-Dashboards f&uuml;r die Gesch&auml;ftsf&uuml;hrung"></li>
+              <li data-en="Planning workflow redesign enabling strategic CFO analysis" data-de="Neugestaltung der Planungsprozesse f&uuml;r strategische CFO-Analysen"></li>
+            </ul>
+          </div>
         </div>
         <div class="entry-tags">
           <span class="entry-tag">AWS</span>
@@ -485,19 +583,25 @@
         </div>
       </div>
 
-      <div class="entry">
+      <!-- Accenture -->
+      <div class="entry collapsible" onclick="this.classList.toggle('open')">
         <div class="entry-header">
-          <div>
-            <div class="entry-role">Management Consultant</div>
+          <div class="entry-header-left">
+            <div class="entry-role" data-en="Management Consultant" data-de="Unternehmensberater"></div>
             <div class="entry-company">Accenture &middot; Milan</div>
           </div>
-          <div class="entry-date">Aug 2016 &mdash; Apr 2020</div>
+          <div class="entry-header-right">
+            <div class="entry-date" data-en="Aug 2016 &mdash; Apr 2020" data-de="Aug 2016 &mdash; Apr 2020"></div>
+            <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
         </div>
-        <div class="entry-desc">
-          <ul>
-            <li>Multiple FP&amp;A transformations for top-tier clients: process redesign, KPIs, tech implementation</li>
-            <li>Primary C-suite delivery interface across full project lifecycles</li>
-          </ul>
+        <div class="entry-collapsible">
+          <div class="entry-desc">
+            <ul>
+              <li data-en="Multiple FP&amp;A transformations for top-tier clients: process redesign, KPIs, tech implementation" data-de="Mehrere FP&amp;A-Transformationen f&uuml;r erstklassige Kunden: Prozess-Redesign, KPIs, Tech-Implementierung"></li>
+              <li data-en="Primary C-suite delivery interface across full project lifecycles" data-de="Prim&auml;re Schnittstelle zur Gesch&auml;ftsf&uuml;hrung &uuml;ber gesamte Projektlaufzeiten"></li>
+            </ul>
+          </div>
         </div>
         <div class="entry-tags">
           <span class="entry-tag">Consulting</span>
@@ -511,45 +615,51 @@
 
     <!-- EDUCATION -->
     <section>
-      <h2 class="section-title">Education</h2>
+      <h2 class="section-title" data-en="Education" data-de="Ausbildung"></h2>
 
       <div class="entry">
         <div class="entry-header">
-          <div>
+          <div class="entry-header-left">
             <div class="entry-role">M.Sc. Business Administration</div>
-            <div class="entry-company">University of Padua &middot; Italy</div>
+            <div class="entry-company" data-en="University of Padua &middot; Italy" data-de="Universit&auml;t Padua &middot; Italien"></div>
           </div>
-          <div class="entry-date">2014 &mdash; 2016</div>
+          <div class="entry-header-right">
+            <div class="entry-date">2014 &mdash; 2016</div>
+          </div>
         </div>
       </div>
 
       <div class="entry">
         <div class="entry-header">
-          <div>
-            <div class="entry-role">Semester Abroad &mdash; Entrepreneurship &amp; Business Planning</div>
-            <div class="entry-company">University of Michigan &middot; USA</div>
+          <div class="entry-header-left">
+            <div class="entry-role" data-en="Semester Abroad &mdash; Entrepreneurship &amp; Business Planning" data-de="Auslandssemester &mdash; Entrepreneurship &amp; Business Planning"></div>
+            <div class="entry-company" data-en="University of Michigan &middot; USA" data-de="University of Michigan &middot; USA"></div>
           </div>
-          <div class="entry-date">2015</div>
+          <div class="entry-header-right">
+            <div class="entry-date">2015</div>
+          </div>
         </div>
       </div>
 
       <div class="entry">
         <div class="entry-header">
-          <div>
+          <div class="entry-header-left">
             <div class="entry-role">B.Sc. General Management</div>
-            <div class="entry-company">University of Pisa &middot; Italy</div>
+            <div class="entry-company" data-en="University of Pisa &middot; Italy" data-de="Universit&auml;t Pisa &middot; Italien"></div>
           </div>
-          <div class="entry-date">2011 &mdash; 2014</div>
+          <div class="entry-header-right">
+            <div class="entry-date">2011 &mdash; 2014</div>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- SKILLS -->
     <section>
-      <h2 class="section-title">Skills &amp; Tools</h2>
+      <h2 class="section-title" data-en="Skills &amp; Tools" data-de="Kompetenzen &amp; Tools"></h2>
 
       <div class="skills-category">
-        <div class="skills-category-title">Finance Systems</div>
+        <div class="skills-category-title" data-en="Finance Systems" data-de="Finanzsysteme"></div>
         <div class="skills-grid">
           <span class="skill-tag">SAP Analytics Cloud</span>
           <span class="skill-tag">SAP S/4HANA</span>
@@ -560,7 +670,7 @@
       </div>
 
       <div class="skills-category">
-        <div class="skills-category-title">Reporting &amp; Analytics</div>
+        <div class="skills-category-title" data-en="Reporting &amp; Analytics" data-de="Reporting &amp; Analytics"></div>
         <div class="skills-grid">
           <span class="skill-tag">Power BI</span>
           <span class="skill-tag">QlikSense</span>
@@ -571,7 +681,7 @@
       </div>
 
       <div class="skills-category">
-        <div class="skills-category-title">AI &amp; Automation</div>
+        <div class="skills-category-title" data-en="AI &amp; Automation" data-de="KI &amp; Automatisierung"></div>
         <div class="skills-grid">
           <span class="skill-tag">Claude</span>
           <span class="skill-tag">Google AI Studio</span>
@@ -581,7 +691,7 @@
       </div>
 
       <div class="skills-category">
-        <div class="skills-category-title">Project Management</div>
+        <div class="skills-category-title" data-en="Project Management" data-de="Projektmanagement"></div>
         <div class="skills-grid">
           <span class="skill-tag">Asana</span>
           <span class="skill-tag">Jira</span>
@@ -596,29 +706,75 @@
 
     <!-- LANGUAGES -->
     <section>
-      <h2 class="section-title">Languages</h2>
+      <h2 class="section-title" data-en="Languages" data-de="Sprachen"></h2>
       <div class="lang-grid">
         <div class="lang-item">
-          <span class="lang-name">Italian</span>
-          <span class="lang-level">Native</span>
+          <span class="lang-name" data-en="Italian" data-de="Italienisch"></span>
+          <span class="lang-level" data-en="Native" data-de="Muttersprache"></span>
         </div>
         <div class="lang-item">
-          <span class="lang-name">English</span>
-          <span class="lang-level">Fluent</span>
+          <span class="lang-name" data-en="English" data-de="Englisch"></span>
+          <span class="lang-level" data-en="Fluent" data-de="Flie&szlig;end"></span>
         </div>
         <div class="lang-item">
-          <span class="lang-name">German</span>
-          <span class="lang-level">Advanced</span>
+          <span class="lang-name" data-en="German" data-de="Deutsch"></span>
+          <span class="lang-level" data-en="Advanced" data-de="Fortgeschritten"></span>
         </div>
       </div>
     </section>
 
     <!-- VOLUNTEERING -->
     <section>
-      <h2 class="section-title">Volunteering</h2>
+      <h2 class="section-title" data-en="Volunteering" data-de="Ehrenamt"></h2>
       <div class="entry">
         <div class="entry-header">
-          <div>
+          <div class="entry-header-left">
             <div class="entry-role">Business Mentor</div>
             <div class="entry-company">Cherie Blair Foundation for Women</div>
-         
+          </div>
+          <div class="entry-header-right">
+            <div class="entry-date">2019 &mdash; 2021</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    // ---- LANGUAGE TOGGLE ----
+    let currentLang = 'en';
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      document.documentElement.lang = lang;
+
+      document.querySelectorAll('[data-en]').forEach(el => {
+        el.innerHTML = el.getAttribute('data-' + lang);
+      });
+
+      // Update button styles
+      document.getElementById('langEN').classList.toggle('lang-btn-active', lang === 'en');
+      document.getElementById('langDE').classList.toggle('lang-btn-active', lang === 'de');
+    }
+
+    document.getElementById('langEN').addEventListener('click', () => setLanguage('en'));
+    document.getElementById('langDE').addEventListener('click', () => setLanguage('de'));
+
+    // ---- THEME TOGGLE ----
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    let isDark = true;
+
+    themeToggle.addEventListener('click', () => {
+      isDark = !isDark;
+      document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      themeIcon.innerHTML = isDark ? '\u263E' : '\u2600';
+    });
+
+    // ---- INIT: set language on load ----
+    setLanguage('en');
+  </script>
+
+</body>
+</html>
